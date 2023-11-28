@@ -67,7 +67,8 @@ const Profile = () => {
 
   useEffect(() => {
     listDocument();
-  }, [listDocument]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateDatabase = async (data) => {
     try {
