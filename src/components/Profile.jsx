@@ -6,20 +6,22 @@ import { Query } from "appwrite";
 import { useForm } from "react-hook-form";
 
 const Profile = () => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-    reset,
-  } = useForm();
   const [contactlist, setContactList] = useState([]);
   const [updatemode, setUpdateMode] = useState(false);
   const [documentId, setDocumentId] = useState("");
   const location = useLocation();
+
   const response = location && location.state && location.state.userId;
 
-  const onSubmit = async (data) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
     if (updatemode) {
       updateDatabase(data);
     } else {
@@ -29,11 +31,6 @@ const Profile = () => {
 
   const createDocument = async (data) => {
     try {
-      if (!data.name || !data.number) {
-        console.log("Name and number are required!");
-        return;
-      }
-
       const res = await database.createDocument(
         conf.appWriteDatabaseId,
         conf.appWriteCollectionId,
@@ -48,9 +45,9 @@ const Profile = () => {
       listDocument();
       reset();
 
-      if (res) console.log(`Contact Created Successfully`, res);
+      if (res) console.log(`Contact Create Successfully`, res);
     } catch (error) {
-      console.log(`Error while creating the document`, error);
+      console.log(`Error while creating the document`);
     }
   };
 
@@ -64,7 +61,7 @@ const Profile = () => {
 
       setContactList(documents);
     } catch (error) {
-      console.log(`Error while listing the contacts`, error);
+      console.log(`Error while listing the contacts`);
     }
   }, [response]);
 
@@ -86,6 +83,7 @@ const Profile = () => {
       listDocument();
       reset();
       setUpdateMode(false);
+
       console.log(`User updated successfully`, res);
     } catch (error) {
       console.log(`Error while updating the database`, error);
@@ -115,7 +113,6 @@ const Profile = () => {
           className="flex gap-y-3 flex-col"
         >
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-
           <input
             {...register("name", {
               required: "Name Is Required!",
@@ -129,6 +126,7 @@ const Profile = () => {
           {errors.number && (
             <p className="text-red-500">{errors.number.message}</p>
           )}
+
           <input
             {...register("number", {
               required: "Number Is Required!",
