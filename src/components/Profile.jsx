@@ -6,19 +6,22 @@ import { Query } from "appwrite";
 import { useForm } from "react-hook-form";
 
 const Profile = () => {
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    reset,
+  } = useForm();
   const [contactlist, setContactList] = useState([]);
   const [updatemode, setUpdateMode] = useState(false);
   const [documentId, setDocumentId] = useState("");
   const location = useLocation();
   const response = location && location.state && location.state.userId;
 
-  const { register, handleSubmit, reset } = useForm();
-
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (updatemode) {
-      updateDatabase();
+      updateDatabase(data);
     } else {
       createDocument(data);
     }
@@ -26,19 +29,18 @@ const Profile = () => {
 
   const createDocument = async (data) => {
     try {
-      // const { name, number } = getValues();
-
-      const { name, number } = data;
-
-      if (!name || !number) console.log("name and number is required!");
+      if (!data.name || !data.number) {
+        console.log("Name and number are required!");
+        return;
+      }
 
       const res = await database.createDocument(
         conf.appWriteDatabaseId,
         conf.appWriteCollectionId,
         "unique()",
         {
-          name: name,
-          number: number,
+          name: data.name,
+          number: data.number,
           id: response,
         }
       );
@@ -46,9 +48,9 @@ const Profile = () => {
       listDocument();
       reset();
 
-      if (res) console.log(`Contact Create Successfully`, res);
+      if (res) console.log(`Contact Created Successfully`, res);
     } catch (error) {
-      console.log(`Error while creating the document`);
+      console.log(`Error while creating the document`, error);
     }
   };
 
@@ -62,7 +64,7 @@ const Profile = () => {
 
       setContactList(documents);
     } catch (error) {
-      console.log(`Error while listing the contacts`);
+      console.log(`Error while listing the contacts`, error);
     }
   }, [response]);
 
@@ -70,23 +72,20 @@ const Profile = () => {
     listDocument();
   }, [listDocument]);
 
-  const updateDatabase = async () => {
+  const updateDatabase = async (data) => {
     try {
-      // const { name, number } = getValues();
-
       const res = await database.updateDocument(
         conf.appWriteDatabaseId,
         conf.appWriteCollectionId,
         documentId,
         {
-          name: name,
-          number: number,
+          name: data.name,
+          number: data.number,
         }
       );
       listDocument();
-      // reset();
+      reset();
       setUpdateMode(false);
-
       console.log(`User updated successfully`, res);
     } catch (error) {
       console.log(`Error while updating the database`, error);
@@ -115,49 +114,43 @@ const Profile = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="flex gap-y-3 flex-col"
         >
+          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+
           <input
             {...register("name", {
               required: "Name Is Required!",
-              onChange: (e) => {
-                setName(e.target.value);
-              },
             })}
             type="text"
             name="name"
             className="outline-none px-3 py-1 rounded-md w-full"
             placeholder="Enter Name Here"
-            value={name}
-            // onChange={(e) => setName(e.target.value)}
-
-            // Handle input changes
           />
 
+          {errors.number && (
+            <p className="text-red-500">{errors.number.message}</p>
+          )}
           <input
             {...register("number", {
               required: "Number Is Required!",
-              onChange: (e) => {
-                setNumber(e.target.value);
-              },
             })}
             type="text"
             name="number"
             className="outline-none px-3 py-1 rounded-md w-full"
             placeholder="Enter Contact Number"
-            value={number}
           />
 
           <span className="flex justify-between mt-2">
             {!updatemode ? (
               <button
                 className="bg-orange-600 text-white px-1 rounded-md"
-                onClick={createDocument}
+                type="submit"
               >
                 Create
               </button>
             ) : (
               <button
                 className="bg-orange-600 text-white px-1 rounded-md"
-                onClick={() => updateDatabase(documentId)}
+                type="submit"
               >
                 Update
               </button>
@@ -175,9 +168,8 @@ const Profile = () => {
                     <button
                       className="cursor-pointer bg-[crimson] text-white px-2 rounded-md"
                       onClick={() => {
-                        console.log("update clicks");
-                        setName(data.name);
-                        setNumber(data.number);
+                        setValue("name", data.name);
+                        setValue("number", data.number);
                         setUpdateMode(true);
                         setDocumentId(data.$id);
                       }}
