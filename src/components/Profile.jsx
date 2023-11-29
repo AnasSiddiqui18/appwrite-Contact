@@ -107,7 +107,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-48px)] bg-gray-400 flex flex-col items-center justify-center ">
+    <div className="h-[calc(100vh-48px)] bg-gray-400 flex flex-col items-center justify-center">
       <div className="w-[500px] h-[400px] bg-orange-200 rounded-lg px-4 py-4 mt-[70px] flex gap-2 flex-col">
         <form
           onSubmit={handleSubmit(onSubmit)}

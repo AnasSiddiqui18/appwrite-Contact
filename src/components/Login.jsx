@@ -44,12 +44,12 @@ function Login() {
 
   const onSubmit = async (data) => {
     setLoading(true);
+
     try {
       const res = await account.createEmailSession(data.email, data.password);
       console.log(`Email session create successfully`, res);
 
       // queryName(res.userId);
-
       setTimeout(() => {
         setLoading(false);
         navigate(`/profile/${uuid()}`, {
@@ -59,7 +59,6 @@ function Login() {
         });
         handleLogin();
       }, 2000);
-      
     } catch (error) {
       console.log(`Error in the login session`, error);
       setError(error.message);
@@ -83,7 +82,6 @@ function Login() {
         <h1 className="font-bold text-xl text-center">Login</h1>
 
         {errors.email && <p className="text-red-400">{errors.email.message}</p>}
-
         <input
           {...register("email", {
             required: "Email is required!",
@@ -119,7 +117,7 @@ function Login() {
           <input
             {...register("password", {
               required: "Password is required!",
-              onChange  : (e) => {
+              onChange: (e) => {
                 handleIcon(e.target.value);
               },
             })}
@@ -132,7 +130,6 @@ function Login() {
         <a href="#" className="w-fit">
           {"Forgot Password"}
         </a>
-
         <button className="text-white bg-blue-600 hover:bg-blue-700 px-2 py-2 rounded-md">
           Login
         </button>
