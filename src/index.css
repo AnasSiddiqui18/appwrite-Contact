@@ -5,3 +5,18 @@
 .active {
   color: gold;
 }
+
+/*? This is a useful trick to remove the default arrows which comes up with the input number field  */
+
+/** For chrome, Safari browsers  */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/** Firefox browser */
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
