@@ -1,7 +1,7 @@
 import { database } from "../appwrite/appwriteConfig";
 import { useCallback, useEffect, useState } from "react";
 import conf from "../conf/conf";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Query } from "appwrite";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -12,9 +12,7 @@ const Profile = () => {
   const [updatemode, setUpdateMode] = useState(false);
   const [documentId, setDocumentId] = useState("");
 
-  const location = useLocation();
-
-  const response = location && location.state && location.state.userId;
+  const { id: response } = useParams();
 
   const schema = yup.object().shape({
     name: yup

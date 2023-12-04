@@ -1,24 +1,21 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
-import { account } from "../appwrite/appwriteConfig";
-import { useNavigate } from "react-router-dom";
 
 function Header() {
-  const { auth, handleLogin } = useUser();
+  const { auth, handleLogout, getToken } = useUser();
 
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    handleLogin();
-    navigate("/");
+  const handleNavigate = async () => {
+    const res = await handleLogout();
+    console.log(res);
 
-    try {
-      const res = await account.deleteSession("current");
-      if (res) console.log(`User logged out successfully`, res);
-    } catch (error) {
-      console.log(`Error in logout`, error);
-    }
+    navigate("/");
   };
+
+  const response = getToken();
+
+  console.log(response);
 
   return (
     <div
@@ -28,13 +25,11 @@ function Header() {
       <div>Contactify</div>
       <nav>
         <ul className="flex gap-8">
-          {!auth && <NavLink to="/">Home</NavLink>}
-          {!auth && <NavLink to="/login">Log In</NavLink>}
-          {!auth && <NavLink to="/signup">Sign Up</NavLink>}
-          {auth && (
-            <NavLink to="/" onClick={handleLogout}>
-              Log Out
-            </NavLink>
+          {!auth && !response && <NavLink to="/">Home</NavLink>}
+          {!auth && !response && <NavLink to="/login">Log In</NavLink>}
+          {!auth && !response && <NavLink to="/signup">Sign Up</NavLink>}
+          {auth && response && (
+            <button onClick={handleNavigate}>Log Out</button>
           )}
         </ul>
       </nav>

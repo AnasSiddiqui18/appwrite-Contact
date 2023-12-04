@@ -1,65 +1,59 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { account, database } from "../appwrite/appwriteConfig";
+import { Link } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useEffect, useState } from "react";
-import conf from "../conf/conf";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useUser } from "../context/userContext";
 
 function Signup() {
-  // const { handlerFunction } = useContext(userContext);
-
   const [data, setData] = useState(false);
   const [changeicon, setchangeIcon] = useState(false);
+
+  const { signUpHandler } = useUser();
 
   const handleIcon = (e) => {
     const userInput = e;
     setData(userInput.length > 0);
   };
+
+  const schema = yup.object().shape({
+    name: yup
+      .string("Should be in string")
+      .required("Name Is Required!")
+      .max(10, "Name maximum consists of 10 char")
+      .min(4, "Name must consists of 4 char"),
+
+    email: yup
+      .string("Should be in string")
+      .required("Email Is Required!")
+      .max(60, "Email must be maximum of 60 characters")
+      .min(10, "Email must be minimum of 10 characters")
+      .email("Enter a valid email address"),
+
+    password: yup
+      .string("Should be in string")
+      .required("Password Is Required!")
+      .min(7, "password must be atleast 7 char long")
+      .matches(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        "Password must contain special character"
+      ),
+  });
+
   const {
     handleSubmit,
     register,
     setFocus,
 
     formState: { errors },
-  } = useForm();
-
-  const navigate = useNavigate();
-
-  const storeUserName = async (userID, name) => {
-    try {
-      const res = await database.createDocument(
-        conf.appWriteDatabaseId,
-        "6553c7554965890c4929",
-        "unique()",
-        {
-          name: name,
-          userId: userID,
-        }
-      );
-
-      console.log(`Username stored successfully`, res);
-    } catch (error) {
-      console.error("Error storing user name:", error);
-    }
-  };
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const onSubmit = async (data) => {
-    try {
-      const res = await account.create(
-        "unique()",
-        data.email,
-        data.password,
-        data.name
-      );
-      console.log(`User created successfully`, res);
-
-      // handlerFunction(res.name);
-      storeUserName(res.$id, res.name);
-
-      navigate("/login");
-    } catch (error) {
-      console.log(`Error while creating the user`, error);
-    }
+    const res = await signUpHandler(data);
+    console.log(res);
   };
 
   useEffect(() => {
@@ -75,7 +69,7 @@ function Signup() {
         <h1 className="font-bold text-xl text-center">Sign Up</h1>
         {errors.name && <p className="text-red-400">{errors.name.message}</p>}
         <input
-          {...register("name", { required: "Name is required!" })}
+          {...register("name")}
           type="text"
           className="border-2 border-gray-600 w-full rounded-md outline-none text-black px-2 py-1"
           placeholder="Enter your name"
