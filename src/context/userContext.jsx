@@ -22,9 +22,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", res.$id);
       setAuth(true);
       console.log("login function runs");
-      return res;
+      return { response: res };
     } catch (error) {
-      console.log(`Error in the login session`, error);
+      console.log(error);
+      return { error: error };
     }
   };
 

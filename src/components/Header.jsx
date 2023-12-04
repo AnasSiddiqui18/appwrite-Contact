@@ -9,13 +9,10 @@ function Header() {
   const handleNavigate = async () => {
     const res = await handleLogout();
     console.log(res);
-
     navigate("/");
   };
 
   const response = getToken();
-
-  console.log(response);
 
   return (
     <div
