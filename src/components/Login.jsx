@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 function Login() {
   const [data, setData] = useState(false);
   const [changeicon, setchangeIcon] = useState(false);
+  const [error, setError] = useState("");
 
   const handleIcon = (e) => {
     const userInput = e;
@@ -49,6 +50,7 @@ function Login() {
       console.log(data);
     } else {
       console.log("Error:", error);
+      setError(error);
     }
   };
 
@@ -58,6 +60,8 @@ function Login() {
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-500 flex flex-col justify-center items-center">
+      {error && <p className=" text-red-400 font-semibold "> {error.message} </p>}
+
       <form
         className={`flex flex-col rounded-md w-[350px] text-white px-6 py-6 gap-3 bg-gray-600`}
         onSubmit={handleSubmit(onSubmit)}
