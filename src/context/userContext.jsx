@@ -170,10 +170,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    OAuthStateHandler();
     const token = getToken();
     setAuth(token ? true : false);
-    console.log("abcd");
   }, []);
 
   //? *** Google login
