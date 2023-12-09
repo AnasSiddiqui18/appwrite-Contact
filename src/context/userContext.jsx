@@ -171,7 +171,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = getToken();
-    setAuth(token ? true : false);
+    setAuth(token);
   }, []);
 
   //? *** Google login
