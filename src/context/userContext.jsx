@@ -173,9 +173,6 @@ export const AuthProvider = ({ children }) => {
     OAuthStateHandler();
     const token = getToken();
     setAuth(token ? true : false);
-    console.log("abcd");
-    console.log("abcd");
-    console.log("abcd");
   }, []);
 
   //? *** Google login
