@@ -80,6 +80,7 @@ const Profile = () => {
 
   useEffect(() => {
     listDocument();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

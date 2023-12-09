@@ -16,7 +16,7 @@ function Login() {
     setData(userInput.length > 0);
   };
 
-  const { handleLogin } = useUser();
+  const { handleLogin, googleLogin } = useUser();
 
   const schema = yup.object().shape({
     email: yup
@@ -42,7 +42,6 @@ function Login() {
 
   const onSubmit = async (data) => {
     const { response, error } = await handleLogin(data);
-
     if (response && response.userId) {
       console.log("response", response);
       console.log(`response`, response.userId);
@@ -60,7 +59,9 @@ function Login() {
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-500 flex flex-col justify-center items-center">
-      {error && <p className=" text-red-400 font-semibold "> {error.message} </p>}
+      {error && (
+        <p className=" text-red-400 font-semibold "> {error.message} </p>
+      )}
 
       <form
         className={`flex flex-col rounded-md w-[350px] text-white px-6 py-6 gap-3 bg-gray-600`}
@@ -117,6 +118,14 @@ function Login() {
         <button className="text-white bg-blue-600 hover:bg-blue-700 px-2 py-2">
           Login
         </button>
+
+        <button
+          className="text-white bg-blue-600 hover:bg-blue-700 px-2 py-2"
+          onClick={(e) => googleLogin(e)}
+        >
+          Continue With Google
+        </button>
+
         <span href="#" className="w-fit">
           {"Don't have an account? "}{" "}
           <Link to="/signup" className="ml-1 text-orange-300  ">

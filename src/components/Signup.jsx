@@ -21,7 +21,7 @@ function Signup() {
     name: yup
       .string("Should be in string")
       .required("Name Is Required!")
-      .max(10, "Name maximum consists of 10 char")
+      .max(15, "Name maximum consists of 15 char")
       .min(4, "Name must consists of 4 char"),
 
     email: yup
