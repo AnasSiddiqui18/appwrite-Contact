@@ -34,7 +34,7 @@ function Header() {
       className="w-full bg-gray-600 text-white flex justify-between p-padding"
       id="header"
     >
-      <div>Contactify {JSON.stringify(auth)}</div>
+      <div>Contactify </div>
       <nav>
         <ul className="flex gap-8">
           {!auth ? <NavLink to="/">Home</NavLink> : null}
