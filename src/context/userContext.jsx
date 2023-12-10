@@ -53,8 +53,6 @@ export const AuthProvider = ({ children }) => {
 
         localStorage.setItem("token", jwt_token);
 
-        console.log("token setted");
-
         // navigate('profile')
       } else {
         throw error("Problem in the login function");
