@@ -42,22 +42,6 @@ function Login() {
 
   const onSubmit = async (data) => {
     const userId = handleLogin(data);
-
-
-
-
-
-    // const { response, error } = await handleLogin(data);
-
-    // if (response && response.userId) {
-    //   console.log("response", response);
-    //   console.log(`response`, response.userId);
-    //   navigate(`/profile/${response.userId}`);
-    //   console.log(data);
-    // } else {
-    //   console.log("Error:", error);
-    //   setError(error);
-    // }
   };
 
   useEffect(() => {
