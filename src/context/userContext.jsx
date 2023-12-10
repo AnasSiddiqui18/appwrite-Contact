@@ -50,7 +50,6 @@ export const AuthProvider = ({ children }) => {
         const decode = jwtDecode(access_token);
         const jwt_token = decode.session_id;
         console.log(jwt_token);
-
         localStorage.setItem("token", jwt_token);
 
         // navigate('profile')

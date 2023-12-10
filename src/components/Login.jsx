@@ -9,14 +9,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 function Login() {
   const [data, setData] = useState(false);
   const [changeicon, setchangeIcon] = useState(false);
-  const [error, setError] = useState("");
 
   const handleIcon = (e) => {
     const userInput = e;
     setData(userInput.length > 0);
   };
 
-  const { handleLogin, googleLogin, getSession } = useUser();
+  const { handleLogin, googleLogin } = useUser();
 
   const schema = yup.object().shape({
     email: yup
@@ -41,6 +40,7 @@ function Login() {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
+    // eslint-disable-next-line no-unused-vars
     const userId = handleLogin(data);
   };
 
@@ -50,9 +50,7 @@ function Login() {
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-500 flex flex-col justify-center items-center">
-      {error && (
-        <p className=" text-red-400 font-semibold "> {error.message} </p>
-      )}
+      <p className=" text-red-400 font-semibold "> {errors.email?.message} </p>
 
       <form
         className={`flex flex-col rounded-md w-[350px] text-white px-6 py-6 gap-3 bg-gray-600`}
