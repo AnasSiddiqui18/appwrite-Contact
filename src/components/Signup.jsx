@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useUser } from "../context/userContext";
@@ -18,12 +18,6 @@ function Signup() {
   };
 
   const schema = yup.object().shape({
-    name: yup
-      .string("Should be in string")
-      .required("Name Is Required!")
-      .max(15, "Name maximum consists of 15 char")
-      .min(4, "Name must consists of 4 char"),
-
     email: yup
       .string("Should be in string")
       .required("Email Is Required!")
@@ -44,7 +38,6 @@ function Signup() {
   const {
     handleSubmit,
     register,
-    setFocus,
 
     formState: { errors },
   } = useForm({
@@ -53,12 +46,13 @@ function Signup() {
 
   const onSubmit = async (data) => {
     const res = await signUpHandler(data);
-    console.log(res);
+
+    console.log("user signed up successfully", res);
   };
 
-  useEffect(() => {
-    setFocus("name");
-  }, [setFocus]);
+  // useEffect(() => {
+  //   setFocus("name");
+  // }, [setFocus]);
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-500 flex justify-center items-center">
@@ -67,13 +61,6 @@ function Signup() {
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="font-bold text-xl text-center">Sign Up</h1>
-        {errors.name && <p className="text-red-400">{errors.name.message}</p>}
-        <input
-          {...register("name")}
-          type="text"
-          className="border-2 border-gray-600 w-full rounded-md outline-none text-black px-2 py-1"
-          placeholder="Enter your name"
-        />
 
         {errors.email && <p className="text-red-400">{errors.email.message}</p>}
 

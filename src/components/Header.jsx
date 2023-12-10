@@ -27,8 +27,6 @@ function Header() {
     }
   };
 
-  console.log("auth = ", auth);
-
   return (
     <div
       className="w-full bg-gray-600 text-white flex justify-between p-padding"

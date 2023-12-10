@@ -30,7 +30,6 @@ const userContext = createContext({
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
-  const [appwriteLogin, setAppwriteLogin] = useState(false);
 
   const navigate = useNavigate();
 
@@ -38,19 +37,37 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogin = async (data) => {
     try {
-      const res = await account.createEmailSession(data.email, data.password);
+      const { data: Logindata, error } = await supabase.auth.signInWithPassword(
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
 
-      console.log(`Email session create successfully`, res);
-      localStorage.setItem("token", res.$id);
-      setAuth(true);
-      console.log("login function runs");
+      if (Logindata) {
+        console.log("sign in successfull", Logindata);
+        const access_token = Logindata.session?.access_token;
+        const decode = jwtDecode(access_token);
+        const jwt_token = decode.session_id;
+        console.log(jwt_token);
 
-      setAppwriteLogin(true);
+        localStorage.setItem("token", jwt_token);
 
-      return { response: res };
+        // navigate('profile')
+      } else {
+        throw error("Problem in the login function");
+      }
+
+      // return Logindata.user.id;
+
+      // const res = await account.createEmailSession(data.email, data.password);
+      // console.log(`Email session create successfully`, res);
+
+      // console.log("login function runs");
+      // setAppwriteLogin(true);
+      // return { response: res };
     } catch (error) {
       console.log(error);
-      return { error: error };
     }
   };
 
@@ -81,16 +98,14 @@ export const AuthProvider = ({ children }) => {
 
   const signUpHandler = async (data) => {
     try {
-      const res = await account.create(
-        "unique()",
-        data.email,
-        data.password,
-        data.name
-      );
-      console.log(`User created successfully`, res);
+      const res = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+      });
+
       return res;
     } catch (error) {
-      console.log(`Error while creating the user`, error);
+      console.error("Unexpected error in sign up:", error.message);
     }
   };
 
@@ -149,14 +164,14 @@ export const AuthProvider = ({ children }) => {
           }
           console.log("auth set to false");
           setAuth(false);
-        } else {
+        } else if (session) {
           navigate(`/profile/${session.user.id}`);
           setAuth(true);
           const jwt_token = session.access_token;
           const decoded = jwtDecode(jwt_token);
           const session_id = decoded.session_id;
           localStorage.setItem("token", session_id);
-          console.log(session.access_token);
+          console.log(session.user);
         }
       }
     );
@@ -164,14 +179,16 @@ export const AuthProvider = ({ children }) => {
 
   const getToken = () => {
     const token = localStorage.getItem("token");
-
     if (!token) return false;
     return token;
   };
 
   useEffect(() => {
+    OAuthStateHandler();
     const token = getToken();
-    setAuth(true);
+    setAuth(token && true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //? *** Google login
@@ -206,7 +223,6 @@ export const AuthProvider = ({ children }) => {
         getToken,
         googleLogin,
         supabase,
-        appwriteLogin,
       }}
     >
       {children}
