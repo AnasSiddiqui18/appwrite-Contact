@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   //? To handle the login funcionality
-  
+
   const handleLogin = async (data) => {
     try {
       const { data: Logindata, error } = await supabase.auth.signInWithPassword(
@@ -120,11 +120,17 @@ export const AuthProvider = ({ children }) => {
     const { data: authLogin } = await supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log(`current event`, event);
+
         if (!session && event === "SIGNED_OUT") {
           authLogin.subscription.unsubscribe();
+        } else if (session) {
+          console.log("session", session);
+          navigate(`/profile/${session.user.id}`);
+          setAuth(true);
         }
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getToken = () => {
@@ -163,7 +169,6 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "discord",
       });
-      console.log("Login with discord data :", data);
       console.log("Login with discord data :", data);
 
       if (error) throw error("Error in the google login");
