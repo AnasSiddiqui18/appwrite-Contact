@@ -164,6 +164,7 @@ export const AuthProvider = ({ children }) => {
         provider: "discord",
       });
       console.log("Login with discord data :", data);
+      console.log("Login with discord data :", data);
 
       if (error) throw error("Error in the google login");
     } catch (error) {
