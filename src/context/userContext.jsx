@@ -132,6 +132,7 @@ export const AuthProvider = ({ children }) => {
     const { data: authLogin } = await supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log(`current event`, event);
+
         if (!session && event === "SIGNED_OUT") {
           authLogin.subscription.unsubscribe();
         } else if (session) {
@@ -141,6 +142,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getToken = () => {
