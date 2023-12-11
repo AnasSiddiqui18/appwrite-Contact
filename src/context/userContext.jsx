@@ -44,6 +44,8 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
+      
+
       if (Logindata) {
         console.log("sign in successfull", Logindata);
         const jwt_token = Logindata.session.access_token;
@@ -107,18 +109,6 @@ export const AuthProvider = ({ children }) => {
   const handleUpdate = async (data) => {
     try {
       await supabase.auth.updateUser({ password: data.password });
-
-      // const queryString = window.location.search;
-      // const urlParams = new URLSearchParams(queryString);
-      // const userId = urlParams.get("userId");
-      // const secret = urlParams.get("secret");
-
-      // const res = await account.updateRecovery(
-      //   userId,
-      //   secret,
-      //   data.password,
-      //   data.password
-      // );
     } catch (error) {
       console.log(`Error while setting new password`);
     }
