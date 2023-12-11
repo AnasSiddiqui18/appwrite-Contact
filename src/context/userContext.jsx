@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   //? To handle the login funcionality
-
+  
   const handleLogin = async (data) => {
     try {
       const { data: Logindata, error } = await supabase.auth.signInWithPassword(
@@ -43,8 +43,6 @@ export const AuthProvider = ({ children }) => {
           password: data.password,
         }
       );
-
-      
 
       if (Logindata) {
         console.log("sign in successfull", Logindata);
