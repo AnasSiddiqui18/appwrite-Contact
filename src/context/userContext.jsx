@@ -133,9 +133,7 @@ export const AuthProvider = ({ children }) => {
       (event, session) => {
         console.log(`current event`, event);
         if (!session && event === "SIGNED_OUT") {
-          if (session && event === "SIGNED_OUT") {
-            authLogin.subscription.unsubscribe();
-          }
+          authLogin.subscription.unsubscribe();
         } else if (session) {
           console.log("session", session);
           navigate(`/profile/${session.user.id}`);
