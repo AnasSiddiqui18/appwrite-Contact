@@ -15,7 +15,7 @@ function Login() {
     setData(userInput.length > 0);
   };
 
-  const { handleLogin, googleLogin } = useUser();
+  const { handleLogin, googleLogin, discordLogin, githubLogin } = useUser();
 
   const schema = yup.object().shape({
     email: yup
@@ -41,7 +41,7 @@ function Login() {
 
   const onSubmit = async (data) => {
     // eslint-disable-next-line no-unused-vars
-    const userId = handleLogin(data);
+    const userId = await handleLogin(data);
   };
 
   useEffect(() => {
@@ -50,8 +50,6 @@ function Login() {
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-500 flex flex-col justify-center items-center">
-      <p className=" text-red-400 font-semibold "> {errors.email?.message} </p>
-
       <form
         className={`flex flex-col rounded-md w-[350px] text-white px-6 py-6 gap-3 bg-gray-600`}
         onSubmit={handleSubmit(onSubmit)}
@@ -108,12 +106,26 @@ function Login() {
           Login
         </button>
 
-        <button
-          className="text-white bg-blue-600 hover:bg-blue-700 px-2 py-2"
-          onClick={(e) => googleLogin(e)}
-        >
-          Continue With Google
-        </button>
+        <div className="flex justify-center gap-10 my-2">
+          <img
+            src="/public/images/google.png"
+            alt="#"
+            className="w-[40px] bg-white p-2 rounded-lg cursor-pointer"
+            onClick={googleLogin}
+          />
+          <img
+            src="/public/images/discord.png"
+            alt="#"
+            className="w-[40px] bg-white p-2 rounded-lg cursor-pointer"
+            onClick={discordLogin}
+          />
+          <img
+            src="/public/images/github.png"
+            alt="#"
+            className="w-[40px] bg-white p-2 rounded-lg cursor-pointer"
+            onClick={githubLogin}
+          />
+        </div>
 
         <span href="#" className="w-fit">
           {"Don't have an account? "}{" "}

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
 import * as yup from "yup";
@@ -11,6 +11,8 @@ function Signup() {
   const [changeicon, setchangeIcon] = useState(false);
 
   const { signUpHandler } = useUser();
+
+  const navigate = useNavigate();
 
   const handleIcon = (e) => {
     const userInput = e;
@@ -47,7 +49,10 @@ function Signup() {
   const onSubmit = async (data) => {
     const res = await signUpHandler(data);
 
-    console.log("user signed up successfully", res);
+    if (res) {
+      console.log("user signed up successfully", res);
+      navigate("/login");
+    }
   };
 
   // useEffect(() => {

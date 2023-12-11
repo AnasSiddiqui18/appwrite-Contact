@@ -26,12 +26,6 @@ function New_Password() {
           className="w-[250px] outline-none px-2 rounded-md py-1"
           placeholder="Enter new password"
         />
-        <input
-          {...register("confirmPassword")}
-          type="text"
-          className="w-[250px] outline-none px-2 rounded-md py-1"
-          placeholder="Re-Enter new password"
-        />
         <button type="submit" className=" bg-blue-500 px-3 py-1 rounded-md">
           Change Password
         </button>

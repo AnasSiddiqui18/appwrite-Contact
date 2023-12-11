@@ -1,31 +1,8 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useUser } from "../context/userContext";
 
 function Header() {
-  const { auth, handleLogout, appwriteLogin, supabase } = useUser();
-
-  const navigate = useNavigate();
-
-  const OAuthlogOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error("Error while sign out OAuth Account");
-      navigate("/");
-      localStorage.removeItem("token");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleNavigate = async () => {
-    if (appwriteLogin) {
-      const res = await handleLogout();
-      console.log(res);
-      navigate("/");
-    } else {
-      OAuthlogOut();
-    }
-  };
+  const { auth, OAuthlogOut } = useUser();
 
   return (
     <div
@@ -38,7 +15,7 @@ function Header() {
           {!auth ? <NavLink to="/">Home</NavLink> : null}
           {!auth ? <NavLink to="/login">Log In</NavLink> : null}
           {!auth ? <NavLink to="/signup">Sign Up</NavLink> : null}
-          {auth ? <button onClick={handleNavigate}>Log Out</button> : null}
+          {auth ? <button onClick={OAuthlogOut}>Log Out</button> : null}
         </ul>
       </nav>
     </div>

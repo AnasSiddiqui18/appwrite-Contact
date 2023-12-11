@@ -5,7 +5,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { account } from "../appwrite/appwriteConfig";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -17,13 +16,14 @@ const supabase = createClient(
 
 const userContext = createContext({
   handleLogin: () => {},
-  handleLogout: () => {},
+  OAuthlogOut: () => {},
   getToken: () => {},
   signUpHandler: () => {},
   handleRecovery: () => {},
   handleUpdate: () => {},
   googleLogin: () => {},
-  OAuthlogOut: () => {},
+  discordLogin: () => {},
+  githubLogin: () => {},
   auth: false,
   appwriteLogin: false,
 });
@@ -46,25 +46,16 @@ export const AuthProvider = ({ children }) => {
 
       if (Logindata) {
         console.log("sign in successfull", Logindata);
-        const access_token = Logindata.session?.access_token;
-        const decode = jwtDecode(access_token);
-        const jwt_token = decode.session_id;
-        console.log(jwt_token);
-        localStorage.setItem("token", jwt_token);
-
-        // navigate('profile')
+        const jwt_token = Logindata.session.access_token;
+        const decoded = jwtDecode(jwt_token);
+        const session_id = decoded.session_id;
+        localStorage.setItem("token", session_id);
+        console.log(`Session id: `, session_id.user);
+        setAuth(true);
+        navigate(`/profile/${Logindata.user.id}`);
       } else {
         throw error("Problem in the login function");
       }
-
-      // return Logindata.user.id;
-
-      // const res = await account.createEmailSession(data.email, data.password);
-      // console.log(`Email session create successfully`, res);
-
-      // console.log("login function runs");
-      // setAppwriteLogin(true);
-      // return { response: res };
     } catch (error) {
       console.log(error);
     }
@@ -72,28 +63,17 @@ export const AuthProvider = ({ children }) => {
 
   //? *****
 
-  //? Get current token when the component mounts
-
-  //? *****
-
-  //? To handle the logout functionality
-
-  const handleLogout = async () => {
+  const OAuthlogOut = async () => {
     try {
-      const res = await account.deleteSession("current");
-      if (res) console.log(`User logged out successfully`, res);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error("Error while sign out OAuth Account");
       setAuth(false);
+      navigate("/");
       localStorage.removeItem("token");
-
-      return res;
     } catch (error) {
-      console.log(`Error in logout`, error);
+      console.log(error);
     }
   };
-
-  //? *****
-
-  //? To handle the sign up functionality
 
   const signUpHandler = async (data) => {
     try {
@@ -108,17 +88,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  //? *****
-
   //? To handle the account recovery process
 
   const handleRecovery = async (data) => {
     try {
-      const response = await account.createRecovery(
-        data.email,
-        "http://localhost:5173/new-password"
-      );
-      return response;
+      await supabase.auth.resetPasswordForEmail(data.email, {
+        redirectTo: "http://localhost:5173/new-password",
+      });
     } catch (error) {
       console.log(`Error in the account recovery`, error);
     }
@@ -130,21 +106,21 @@ export const AuthProvider = ({ children }) => {
 
   const handleUpdate = async (data) => {
     try {
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const userId = urlParams.get("userId");
-      const secret = urlParams.get("secret");
+      await supabase.auth.updateUser({ password: data.password });
 
-      const res = await account.updateRecovery(
-        userId,
-        secret,
-        data.password,
-        data.password
-      );
+      // const queryString = window.location.search;
+      // const urlParams = new URLSearchParams(queryString);
+      // const userId = urlParams.get("userId");
+      // const secret = urlParams.get("secret");
 
-      return res;
+      // const res = await account.updateRecovery(
+      //   userId,
+      //   secret,
+      //   data.password,
+      //   data.password
+      // );
     } catch (error) {
-      console.log(`Error while setting new password`, error);
+      console.log(`Error while setting new password`);
     }
   };
 
@@ -156,25 +132,12 @@ export const AuthProvider = ({ children }) => {
     const { data: authLogin } = await supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log(`current event`, event);
-        if (!session) {
-          // navigate("/login");
-          if (!session && event === "SIGNED_OUT") {
-            authLogin.subscription.unsubscribe();
-          }
-          console.log("auth set to false");
-          setAuth(false);
-        } else if (session) {
-          navigate(`/profile/${session.user.id}`);
-          setAuth(true);
-          const jwt_token = session.access_token;
-          const decoded = jwtDecode(jwt_token);
-          const session_id = decoded.session_id;
-          localStorage.setItem("token", session_id);
-          console.log(session.user);
+        if (!session && event === "SIGNED_OUT") {
+          authLogin.subscription.unsubscribe();
         }
       }
     );
-  }, [navigate]);
+  }, []);
 
   const getToken = () => {
     const token = localStorage.getItem("token");
@@ -192,36 +155,61 @@ export const AuthProvider = ({ children }) => {
 
   //? *** Google login
 
-  const googleLogin = async (e) => {
-    e.preventDefault();
-
+  const googleLogin = async () => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
       });
 
-      console.log("data :", data);
+      console.log("Login with google data :", data);
       if (error) throw error("Error in the google login");
     } catch (error) {
       console.log(error);
     }
-    return googleLogin;
   };
 
   //? *****
+
+  const discordLogin = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "discord",
+      });
+      console.log("Login with discord data :", data);
+
+      if (error) throw error("Error in the google login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const githubLogin = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+      });
+
+      console.log("Login with github data :", data);
+      if (error) throw error("Error in the google login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <userContext.Provider
       value={{
         handleLogin,
         auth,
-        handleLogout,
         signUpHandler,
         handleRecovery,
         handleUpdate,
         getToken,
         googleLogin,
+        discordLogin,
+        githubLogin,
         supabase,
+        OAuthlogOut,
       }}
     >
       {children}
