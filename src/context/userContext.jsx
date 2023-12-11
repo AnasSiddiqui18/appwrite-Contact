@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
-      console.log("handlelogin function");
+      
 
       if (Logindata) {
         console.log("sign in successfull", Logindata);
