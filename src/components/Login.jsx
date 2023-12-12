@@ -108,19 +108,19 @@ function Login() {
 
         <div className="flex justify-center gap-10 my-2">
           <img
-            src="/public/images/google.png"
+            src="/images/google.png"
             alt="#"
             className="w-[40px] bg-white p-2 rounded-lg cursor-pointer"
             onClick={googleLogin}
           />
           <img
-            src="/public/images/discord.png"
+            src="/images/discord.png"
             alt="#"
             className="w-[40px] bg-white p-2 rounded-lg cursor-pointer"
             onClick={discordLogin}
           />
           <img
-            src="/public/images/github.png"
+            src="/images/github.png"
             alt="#"
             className="w-[40px] bg-white p-2 rounded-lg cursor-pointer"
             onClick={githubLogin}

@@ -1,4 +1,4 @@
-// UserContext.js
+//? UserContext.js
 import { createContext } from "react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -16,7 +16,6 @@ const userContext = createContext({
   discordLogin: () => {},
   githubLogin: () => {},
   auth: false,
-  appwriteLogin: false,
 });
 
 // UserProvider.js
@@ -40,7 +39,7 @@ export const AuthProvider = ({ children }) => {
       );
 
       if (Logindata) {
-        console.log("sign in successful", Logindata);
+        console.log("sign in successful", Logindata.session);
         const jwt_token = Logindata.session.access_token;
         const decoded = jwtDecode(jwt_token);
         const session_id = decoded.session_id;
@@ -99,17 +98,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const OAuthStateHandler = useCallback(async () => {
-    const { data: authLogin } = await supabase.auth.onAuthStateChange(
+  const OAuthStateHandler = useCallback(() => {
+    const { data: authLogin } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log(`current event`, event);
 
         if (!session && event === "SIGNED_OUT") {
           authLogin.subscription.unsubscribe();
+
+          console.log("unsubscribed");
         } else if (session) {
           console.log("session", session);
-          navigate(`/profile/${session.user.id}`);
           setAuth(true);
+          navigate(`/profile/${session.user.id}`);
+          const jwt_token = session.access_token;
+          const decoded = jwtDecode(jwt_token);
+          const session_id = decoded.session_id;
+          localStorage.setItem("token", session_id);
         }
       }
     );
@@ -135,10 +140,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo: "http://localhost:5173/success",
+        },
       });
 
-      console.log("Login with google data :", data);
-      if (error) throw new Error("Error in the google login");
+      console.log(data);
+
+      if (error) throw new error("Error in the google login");
     } catch (error) {
       console.log(error);
     }
@@ -148,6 +157,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "discord",
+        options: {
+          redirectTo: "http://localhost:5173/success",
+        },
       });
       console.log("Login with discord data :", data);
 
@@ -161,10 +173,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "github",
+
+        options: {
+          redirectTo: "http://localhost:5173/success",
+        },
       });
 
       console.log("Login with github data :", data);
-      if (error) throw new Error("Error in the google login");
+      if (error) throw new error("Error in the google login");
     } catch (error) {
       console.log(error);
     }
