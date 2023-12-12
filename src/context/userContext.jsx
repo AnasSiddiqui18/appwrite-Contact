@@ -1,18 +1,9 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+// UserContext.js
+import { createContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
-const supabase = createClient(
-  "https://yuceplafchimtpmfxvog.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1Y2VwbGFmY2hpbXRwbWZ4dm9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDE5NTQ5MjcsImV4cCI6MjAxNzUzMDkyN30.mkEI-23GQ6ZHPBbvcK3mK-uXq0v1C4CPoJHycWAHGZs"
-);
 
 const userContext = createContext({
   handleLogin: () => {},
@@ -28,12 +19,16 @@ const userContext = createContext({
   appwriteLogin: false,
 });
 
+// UserProvider.js
+
+const supabase = createClient(
+  "https://yuceplafchimtpmfxvog.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1Y2VwbGFmY2hpbXRwbWZ4dm9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDE5NTQ5MjcsImV4cCI6MjAxNzUzMDkyN30.mkEI-23GQ6ZHPBbvcK3mK-uXq0v1C4CPoJHycWAHGZs"
+);
+
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
-
   const navigate = useNavigate();
-
-  //? To handle the login funcionality
 
   const handleLogin = async (data) => {
     try {
@@ -45,7 +40,7 @@ export const AuthProvider = ({ children }) => {
       );
 
       if (Logindata) {
-        console.log("sign in successfull", Logindata);
+        console.log("sign in successful", Logindata);
         const jwt_token = Logindata.session.access_token;
         const decoded = jwtDecode(jwt_token);
         const session_id = decoded.session_id;
@@ -54,19 +49,17 @@ export const AuthProvider = ({ children }) => {
         setAuth(true);
         navigate(`/profile/${Logindata.user.id}`);
       } else {
-        throw error("Problem in the login function");
+        throw new error("Problem in the login function");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  //? *****
-
   const OAuthlogOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error("Error while sign out OAuth Account");
+      if (error) throw new Error("Error while signing out OAuth Account");
       setAuth(false);
       navigate("/");
       localStorage.removeItem("token");
@@ -88,8 +81,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  //? To handle the account recovery process
-
   const handleRecovery = async (data) => {
     try {
       await supabase.auth.resetPasswordForEmail(data.email, {
@@ -100,10 +91,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  //? *****
-
-  //? To set a new password
-
   const handleUpdate = async (data) => {
     try {
       await supabase.auth.updateUser({ password: data.password });
@@ -111,10 +98,6 @@ export const AuthProvider = ({ children }) => {
       console.log(`Error while setting new password`);
     }
   };
-
-  //? *****
-
-  //? OAuth state handler helps us if we want to do something when the state get changes
 
   const OAuthStateHandler = useCallback(async () => {
     const { data: authLogin } = await supabase.auth.onAuthStateChange(
@@ -130,6 +113,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
     );
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -147,8 +131,6 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  //? *** Google login
-
   const googleLogin = async () => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -156,13 +138,11 @@ export const AuthProvider = ({ children }) => {
       });
 
       console.log("Login with google data :", data);
-      if (error) throw error("Error in the google login");
+      if (error) throw new Error("Error in the google login");
     } catch (error) {
       console.log(error);
     }
   };
-
-  //? *****
 
   const discordLogin = async () => {
     try {
@@ -171,7 +151,7 @@ export const AuthProvider = ({ children }) => {
       });
       console.log("Login with discord data :", data);
 
-      if (error) throw error("Error in the google login");
+      if (error) throw new Error("Error in the google login");
     } catch (error) {
       console.log(error);
     }
@@ -184,7 +164,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       console.log("Login with github data :", data);
-      if (error) throw error("Error in the google login");
+      if (error) throw new Error("Error in the google login");
     } catch (error) {
       console.log(error);
     }
@@ -210,6 +190,8 @@ export const AuthProvider = ({ children }) => {
     </userContext.Provider>
   );
 };
+
+// useUser.js
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useUser = () => useContext(userContext);
