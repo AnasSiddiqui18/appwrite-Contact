@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { account } from "../appwrite/appwriteConfig";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
@@ -138,8 +132,8 @@ export const AuthProvider = ({ children }) => {
 
   //? OAuth state handler helps us if we want to do something when the state get changes
 
-  const OAuthStateHandler = useCallback(async () => {
-    const { data: authLogin } = await supabase.auth.onAuthStateChange(
+  const OAuthStateHandler = () => {
+    const { data: authLogin } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log(`current event`, event);
         if (!session) {
@@ -160,7 +154,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
     );
-  }, [navigate]);
+  };
 
   const getToken = () => {
     const token = localStorage.getItem("token");
@@ -170,8 +164,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    OAuthStateHandler;
     const token = getToken();
-    setAuth(true);
+    setAuth(token && true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //? *** Google login
