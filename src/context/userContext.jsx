@@ -1,6 +1,6 @@
 //? UserContext.js
 import { createContext } from "react";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -27,6 +27,7 @@ const supabase = createClient(
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogin = async (data) => {
@@ -44,24 +45,12 @@ export const AuthProvider = ({ children }) => {
         const decoded = jwtDecode(jwt_token);
         const session_id = decoded.session_id;
         localStorage.setItem("token", session_id);
-        console.log(`Session id: `, session_id.user);
+        console.log(`Session id: `, session_id);
         setAuth(true);
         navigate(`/profile/${Logindata.user.id}`);
       } else {
         throw new error("Problem in the login function");
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const OAuthlogOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw new Error("Error while signing out OAuth Account");
-      setAuth(false);
-      navigate("/");
-      localStorage.removeItem("token");
     } catch (error) {
       console.log(error);
     }
@@ -98,17 +87,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const OAuthStateHandler = useCallback(() => {
+  const OAuthStateHandler = () => {
     const { data: authLogin } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log(`current event`, event);
-
         if (!session && event === "SIGNED_OUT") {
           authLogin.subscription.unsubscribe();
-
-          console.log("unsubscribed");
+          console.log("session is not present");
         } else if (session) {
-          console.log("session", session);
+          console.log(`Session`, session);
           setAuth(true);
           navigate(`/profile/${session.user.id}`);
           const jwt_token = session.access_token;
@@ -118,9 +105,20 @@ export const AuthProvider = ({ children }) => {
         }
       }
     );
+  };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const OAuthlogOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw new Error("Error while signing out OAuth Account");
+
+      setAuth(false);
+      navigate("/");
+      localStorage.removeItem("token");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getToken = () => {
     const token = localStorage.getItem("token");
@@ -130,6 +128,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     OAuthStateHandler();
+
     const token = getToken();
     setAuth(token && true);
 
@@ -157,13 +156,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "discord",
+
         options: {
           redirectTo: "http://localhost:5173/success",
         },
       });
-      console.log("Login with discord data :", data);
 
-      if (error) throw new Error("Error in the google login");
+      console.log("Login with discord data :", data);
+      if (error) throw new error("Error in the google login");
     } catch (error) {
       console.log(error);
     }
