@@ -86,18 +86,18 @@ function Signup() {
           <p className="text-red-400">{errors.password.message}</p>
         )}
 
-        <span className="relative">
+        <span className=" flex flex-row-reverse items-center bg-white rounded-md">
           {data === true && (
-            <span>
-              {changeicon === false ? (
+            <span className=" mr-[5px]">
+              {!changeicon ? (
                 <AiFillEyeInvisible
                   onClick={() => setchangeIcon((prev) => !prev)}
-                  className="absolute text-2xl z-10 top-[50%] translate-y-[-50%] right-[12px] text-black"
+                  className="text-2xl text-black "
                 />
               ) : (
                 <AiFillEye
                   onClick={() => setchangeIcon((prev) => !prev)}
-                  className="absolute top-[50%] translate-y-[-50%] right-[12px] text-2xl z-10 text-black"
+                  className="text-2xl text-black "
                 />
               )}
             </span>
@@ -105,20 +105,11 @@ function Signup() {
 
           <input
             {...register("password", {
-              required: "Password is required!",
               onChange: (e) => {
                 handleIcon(e.target.value);
               },
-              pattern: {
-                value: /^(?=.*[!@#$%^&*])/,
-                message: "Password should contains special characters",
-              },
-              minLength: {
-                value: 8,
-                message: "Password should be 8 characters long",
-              },
             })}
-            className="border-2 border-gray-600 w-full rounded-md outline-none text-black px-2 py-1"
+            className="w-full outline-none text-black px-2 py-1 rounded-md"
             placeholder="Enter your password"
             type={!changeicon ? "password" : "text"}
           />

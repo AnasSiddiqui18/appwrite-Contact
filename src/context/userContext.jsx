@@ -95,13 +95,17 @@ export const AuthProvider = ({ children }) => {
           authLogin.subscription.unsubscribe();
           console.log("session is not present");
         } else if (session) {
-          console.log(`Session`, session);
-          setAuth(true);
-          navigate(`/profile/${session.user.id}`);
-          const jwt_token = session.access_token;
-          const decoded = jwtDecode(jwt_token);
-          const session_id = decoded.session_id;
-          localStorage.setItem("token", session_id);
+          console.log(session);
+          if (session && session.user.app_metadata.provider !== "email") {
+            console.log("session is present");
+            setAuth(true);
+            navigate(`/profile/${session.user.id}`);
+            const jwt_token = session.access_token;
+            const decoded = jwtDecode(jwt_token);
+            const session_id = decoded.session_id;
+            localStorage.setItem("token", session_id);
+            console.log(`session`, session);
+          }
         }
       }
     );
@@ -131,6 +135,7 @@ export const AuthProvider = ({ children }) => {
 
     const token = getToken();
     setAuth(token && true);
+    console.log("use effect runs");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -144,7 +149,7 @@ export const AuthProvider = ({ children }) => {
         },
       });
 
-      console.log(data);
+      console.log(`login with google`, data);
 
       if (error) throw new error("Error in the google login");
     } catch (error) {
@@ -156,7 +161,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "discord",
-
         options: {
           redirectTo: "http://localhost:5173/success",
         },
@@ -173,7 +177,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "github",
-
         options: {
           redirectTo: "http://localhost:5173/success",
         },

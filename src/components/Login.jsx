@@ -67,10 +67,7 @@ function Login() {
 
         <p className="text-red-400">{errors.password?.message}</p>
 
-        <span
-          className=" flex flex-row-reverse items-center bg-white rounded-md"
-          id="second"
-        >
+        <span className="flex flex-row-reverse items-center bg-white rounded-md">
           {data === true && (
             <span className=" mr-[5px]">
               {!changeicon ? (
