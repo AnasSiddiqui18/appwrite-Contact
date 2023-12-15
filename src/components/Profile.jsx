@@ -63,7 +63,7 @@ const Profile = () => {
 
       if (res) console.log(`Contact Create Successfully`, res);
     } catch (error) {
-      console.log(`Error while creating the document`);
+      console.log(`Error while creating the document`, error);
     }
   };
 
@@ -77,7 +77,7 @@ const Profile = () => {
 
       setContactList(documents);
     } catch (error) {
-      console.log(`Error while listing the contacts`);
+      console.log(`Error while listing the contacts`, error);
     }
   }, [response]);
 
