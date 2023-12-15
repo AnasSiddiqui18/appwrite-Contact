@@ -129,7 +129,7 @@ const Profile = () => {
     <div className="h-[calc(100vh-48px)] bg-gray-400 flex flex-col items-center justify-center">
       <img src={image} alt="" />
 
-      <div className="w-[500px] h-[400px] bg-orange-200 rounded-lg px-4 py-4 mt-[70px] flex gap-2 flex-col">
+      <div className="w-[500px] h-[400px] bg-orange-400 rounded-lg px-4 py-4 mt-[70px] flex gap-2 flex-col">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex gap-y-3 flex-col"
