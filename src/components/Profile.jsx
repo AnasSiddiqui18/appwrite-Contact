@@ -54,7 +54,7 @@ const Profile = () => {
         {
           name: data.name,
           number: data.number,
-          id: response,
+          id: "d6a50d61-874f-4abf-b8de-493332e7d4bc",
         }
       );
 
@@ -72,7 +72,7 @@ const Profile = () => {
       const { documents } = await database.listDocuments(
         "6546bcb5d7292998afaf",
         "6546bcc0e8f8826ef025",
-        [Query.equal("id", response)]
+        [Query.equal("id", "d6a50d61-874f-4abf-b8de-493332e7d4bc")]
       );
 
       setContactList(documents);
