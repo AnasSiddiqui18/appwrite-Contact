@@ -48,8 +48,8 @@ const Profile = () => {
   const createDocument = async (data) => {
     try {
       const res = await database.createDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
+        "6546bcb5d7292998afaf",
+        "6546bcc0e8f8826ef025",
         "unique()",
         {
           name: data.name,
@@ -70,8 +70,8 @@ const Profile = () => {
   const listDocument = useCallback(async () => {
     try {
       const { documents } = await database.listDocuments(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
+        "6546bcb5d7292998afaf",
+        "6546bcc0e8f8826ef025",
         [Query.equal("id", response)]
       );
 
