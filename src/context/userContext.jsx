@@ -158,9 +158,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "discord",
-        options: {
-          redirectTo: "http://localhost:5173/success",
-        },
       });
 
       console.log("Login with discord data :", data);
@@ -174,9 +171,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "github",
-        options: {
-          redirectTo: "http://localhost:5173/success",
-        },
       });
 
       console.log("Login with github data :", data);
