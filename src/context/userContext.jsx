@@ -144,6 +144,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo: "https://appwrite-contact.vercel.app/success",
+        },
       });
 
       console.log(`login with google`, data);
