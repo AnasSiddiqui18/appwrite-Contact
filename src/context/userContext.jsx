@@ -144,9 +144,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: {
-          redirectTo: "/success",
-        },
       });
 
       console.log(`login with google`, data);
