@@ -19,6 +19,8 @@ function Login() {
 
   const userId = location.state && location.state.userId;
 
+  console.log(userId);
+
   const notify = () => toast("User Registered Successfully!");
 
   useEffect(() => {
