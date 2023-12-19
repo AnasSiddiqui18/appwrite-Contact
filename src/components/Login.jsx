@@ -19,13 +19,14 @@ function Login() {
 
   const userId = location.state && location.state.userId;
 
-  console.log(userId);
+  userId && console.log(userId);
 
   const notify = () => toast("User Registered Successfully!");
 
   useEffect(() => {
     console.log("first run");
-    notify();
+    if (userId) notify();
+    return null;
   }, [userId]);
 
   const handleIcon = (e) => {
