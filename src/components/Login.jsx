@@ -5,10 +5,26 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
 
 function Login() {
   const [data, setData] = useState(false);
   const [changeicon, setchangeIcon] = useState(false);
+
+  // const { userId: response } = useParams();
+
+  const location = useLocation();
+
+  const userId = location.state && location.state.userId;
+
+  const notify = () => toast("User Registered Successfully!");
+
+  useEffect(() => {
+    console.log("first run");
+    notify();
+  }, [userId]);
 
   const handleIcon = (e) => {
     const userInput = e;
@@ -50,6 +66,8 @@ function Login() {
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-500 flex flex-col justify-center items-center">
+      <ToastContainer theme={"dark"} />
+
       <form
         className={`flex flex-col rounded-md w-[350px] text-white px-6 py-6 gap-3 bg-gray-600`}
         onSubmit={handleSubmit(onSubmit)}

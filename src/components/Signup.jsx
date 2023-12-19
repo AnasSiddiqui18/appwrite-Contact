@@ -49,9 +49,18 @@ function Signup() {
   const onSubmit = async (data) => {
     const res = await signUpHandler(data);
 
+    console.log("new user details", res.user);
+
     if (res) {
       console.log("user signed up successfully", res);
-      navigate("/login");
+
+      console.log(res.data.user.id);
+
+      navigate(`/login`, {
+        state: {
+          userId: res.data.user.id,
+        },
+      });
     }
   };
 
