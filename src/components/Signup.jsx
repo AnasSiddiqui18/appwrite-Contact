@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useUser } from "../context/userContext";
@@ -40,6 +40,7 @@ function Signup() {
   const {
     handleSubmit,
     register,
+    setFocus,
 
     formState: { errors },
   } = useForm({
@@ -64,9 +65,9 @@ function Signup() {
     }
   };
 
-  // useEffect(() => {
-  //   setFocus("name");
-  // }, [setFocus]);
+  useEffect(() => {
+    setFocus("email");
+  }, [setFocus]);
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-500 flex justify-center items-center">
