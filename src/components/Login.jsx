@@ -110,7 +110,7 @@ function Login() {
             className="w-full outline-none text-black px-2 py-1 rounded-md"
             placeholder="Enter your password"
             type={!changeicon ? "password" : "text"}
-            autoComplete="true"  
+            autoComplete="true"
           />
         </span>
 
