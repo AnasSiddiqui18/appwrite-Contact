@@ -20,6 +20,13 @@ function Signup() {
   };
 
   const schema = yup.object().shape({
+    name: yup
+      .string("Should be in string")
+      .required("Email Is Required!")
+      .max(10, "Email must be maximum of 60 characters")
+      .min(4, "Email must be minimum of 10 characters"),
+    // .email("Enter a valid Name "),
+
     email: yup
       .string("Should be in string")
       .required("Email Is Required!")
@@ -50,16 +57,12 @@ function Signup() {
   const onSubmit = async (data) => {
     const res = await signUpHandler(data);
 
-    console.log("new user details", res.user);
-
     if (res) {
       console.log("user signed up successfully", res);
 
-      console.log(res.data.user.id);
-
       navigate(`/login`, {
         state: {
-          userId: res.data.user.id,
+          userId: res?.$id,
         },
       });
     }
@@ -78,6 +81,18 @@ function Signup() {
         <h1 className="font-bold text-xl text-center">Sign Up</h1>
 
         {errors.email && <p className="text-red-400">{errors.email.message}</p>}
+
+        <input
+          {...register("name", {
+            required: "Name is required!",
+            pattern: {
+              message: "Enter a valid email address",
+            },
+          })}
+          type="text"
+          className="border-2 border-gray-600 w-full rounded-md outline-none text-black px-2 py-1"
+          placeholder="Enter your email"
+        />
 
         <input
           {...register("email", {

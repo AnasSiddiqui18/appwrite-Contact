@@ -19,7 +19,9 @@ function Login() {
 
   const userId = location.state && location.state.userId;
   userId && console.log(userId);
+
   const notify = () => toast("User Registered Successfully!");
+
   useEffect(() => {
     console.log("first run");
     if (userId) notify();
@@ -56,7 +58,13 @@ function Login() {
 
   const onSubmit = async (data) => {
     // eslint-disable-next-line no-unused-vars
-    const userId = await handleLogin(data);
+    const res = await handleLogin(data);
+
+    if (res) {
+      console.log(res);
+      console.log(res.userId);
+      navigate(`/profile/${res.userId}`);
+    }
   };
 
   useEffect(() => {

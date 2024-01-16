@@ -4,6 +4,8 @@ import { useContext, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { account } from "../appwrite/appwriteConfig";
+import { ID } from "appwrite";
 
 const userContext = createContext({
   handleLogin: () => {},
@@ -15,6 +17,7 @@ const userContext = createContext({
   googleLogin: () => {},
   discordLogin: () => {},
   githubLogin: () => {},
+  getUser: () => {},
   auth: false,
 });
 
@@ -27,30 +30,15 @@ const supabase = createClient(
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
-
   const navigate = useNavigate();
 
   const handleLogin = async (data) => {
     try {
-      const { data: Logindata, error } = await supabase.auth.signInWithPassword(
-        {
-          email: data.email,
-          password: data.password,
-        }
-      );
+      const res = await account.createEmailSession(data.email, data.password);
+      localStorage.setItem("token", res.$id);
 
-      if (Logindata) {
-        console.log("sign in successful", Logindata.session);
-        const jwt_token = Logindata.session.access_token;
-        const decoded = jwtDecode(jwt_token);
-        const session_id = decoded.session_id;
-        localStorage.setItem("token", session_id);
-        console.log(`Session id: `, session_id);
-        setAuth(true);
-        navigate(`/profile/${Logindata.user.id}`);
-      } else {
-        throw new error("Problem in the login function");
-      }
+      setAuth(true);
+      return res;
     } catch (error) {
       console.log(error);
     }
@@ -58,10 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const signUpHandler = async (data) => {
     try {
-      const res = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-      });
+      const res = await account.create(ID.unique(), data.email, data.password);
 
       return res;
     } catch (error) {
@@ -111,14 +96,23 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
+  const getUser = async () => {
+    try {
+      const res = await account.get();
+
+      return res;
+    } catch (error) {
+      console.log(`error while getting the account`, error);
+    }
+  };
+
   const OAuthlogOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw new Error("Error while signing out OAuth Account");
-
+      const res = await account.deleteSession("current");
       setAuth(false);
       navigate("/");
       localStorage.removeItem("token");
+      return res;
     } catch (error) {
       console.log(error);
     }
@@ -134,7 +128,13 @@ export const AuthProvider = ({ children }) => {
     OAuthStateHandler();
 
     const token = getToken();
-    setAuth(token && true);
+
+    if (token) {
+      setAuth(true);
+    } else {
+      setAuth(false);
+    }
+
     console.log("use effect runs");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -194,6 +194,7 @@ export const AuthProvider = ({ children }) => {
         githubLogin,
         supabase,
         OAuthlogOut,
+        getUser,
       }}
     >
       {children}

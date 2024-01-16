@@ -6,7 +6,7 @@ import { Query } from "appwrite";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useUser } from "../context/userContext";
+// import { useUser } from "../context/userContext";
 
 const Profile = () => {
   const [contactlist, setContactList] = useState([]);
@@ -14,8 +14,6 @@ const Profile = () => {
   const [documentId, setDocumentId] = useState("");
 
   const { id: response } = useParams();
-
-  const { image } = useUser();
 
   const schema = yup.object().shape({
     name: yup
@@ -127,8 +125,6 @@ const Profile = () => {
 
   return (
     <div className="h-[calc(100vh-48px)] bg-gray-400 flex flex-col items-center justify-center">
-      <img src={image} alt="" />
-
       <div className="w-[500px] h-[400px] bg-orange-400 rounded-lg px-4 py-4 mt-[70px] flex gap-2 flex-col">
         <form
           onSubmit={handleSubmit(onSubmit)}
