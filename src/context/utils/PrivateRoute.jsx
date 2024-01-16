@@ -1,32 +1,19 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useUser } from "../userContext";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 const PrivateRoute = () => {
-  const { auth, getToken, getUser } = useUser();
-  const [tokenChecked, setTokenChecked] = useState(false);
-  const [userIsPresent, setUserIsPresent] = useState(false);
+  const { auth, getUser, tokenPresent } = useUser();
 
-  const handleToken = useCallback(() => {
-    const res = getToken();
-    console.log("token", res);
-
-    if (res) {
-      setTokenChecked(true);
-    } else {
-      setTokenChecked(false);
-    }
-  }, [getToken]);
+  const nofify = () => toast("User Logged In Successfully");
 
   const handleUser = useCallback(async () => {
     try {
       const res = await getUser();
       if (res) {
-        setUserIsPresent(true);
-
+        nofify();
         console.log(res);
-      } else {
-        setUserIsPresent(false);
       }
     } catch (error) {
       console.log("error while getting the user", error);
@@ -34,19 +21,21 @@ const PrivateRoute = () => {
   }, [getUser]);
 
   useEffect(() => {
-    handleToken();
     handleUser();
-  }, [handleToken, handleUser]);
+  }, [handleUser]);
 
   // Render nothing until the token is checked
-  if (!tokenChecked) {
-    return null;
-  }
-  if (!userIsPresent) {
+  if (!tokenPresent) {
     return <h3>Loading..</h3>;
   }
 
-  return auth && tokenChecked ? <Outlet /> : <Navigate to="/login" />;
+  return (
+    <>
+      {" "}
+      <ToastContainer theme={"dark"} />
+      {auth && tokenPresent ? <Outlet /> : <Navigate to="/login" />}
+    </>
+  );
 };
 
 export default PrivateRoute;

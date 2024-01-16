@@ -114,6 +114,7 @@ export const AuthProvider = ({ children }) => {
       setTokenPresent(true);
     } else {
       setAuth(false);
+      setTokenPresent(false);
     }
 
     console.log("use effect runs");
