@@ -4,6 +4,10 @@ import { useUser } from "../context/userContext";
 function Header() {
   const { auth, OAuthlogOut, tokenPresent } = useUser();
 
+  if (tokenPresent) {
+    console.log("token is present");
+  }
+
   return (
     <div
       className="w-full bg-gray-600 text-white flex justify-between p-padding"

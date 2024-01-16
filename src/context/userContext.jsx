@@ -3,7 +3,6 @@ import { createContext } from "react";
 import { useContext, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import { account } from "../appwrite/appwriteConfig";
 import { ID } from "appwrite";
 
@@ -41,6 +40,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", res.$id);
 
       setAuth(true);
+      setTokenPresent(true);
+
       return res;
     } catch (error) {
       console.log(error);
@@ -75,30 +76,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const OAuthStateHandler = () => {
-    const { data: authLogin } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log(`current event`, event);
-        if (!session && event === "SIGNED_OUT") {
-          authLogin.subscription.unsubscribe();
-          console.log("session is not present");
-        } else if (session) {
-          console.log(session);
-          if (session && session.user.app_metadata.provider !== "email") {
-            console.log("session is present");
-            setAuth(true);
-            navigate(`/profile/${session.user.id}`);
-            const jwt_token = session.access_token;
-            const decoded = jwtDecode(jwt_token);
-            const session_id = decoded.session_id;
-            localStorage.setItem("token", session_id);
-            console.log(`session`, session);
-          }
-        }
-      }
-    );
-  };
-
   const getUser = async () => {
     try {
       const res = await account.get();
@@ -130,8 +107,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    OAuthStateHandler();
-
     const token = getToken();
 
     if (token) {
