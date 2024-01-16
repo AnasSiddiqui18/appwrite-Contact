@@ -19,6 +19,7 @@ const userContext = createContext({
   githubLogin: () => {},
   getUser: () => {},
   auth: false,
+  tokenPresent: false,
 });
 
 // UserProvider.js
@@ -30,6 +31,8 @@ const supabase = createClient(
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
+  const [tokenPresent, setTokenPresent] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogin = async (data) => {
@@ -112,6 +115,8 @@ export const AuthProvider = ({ children }) => {
       setAuth(false);
       navigate("/");
       localStorage.removeItem("token");
+      setTokenPresent(false);
+
       return res;
     } catch (error) {
       console.log(error);
@@ -131,6 +136,7 @@ export const AuthProvider = ({ children }) => {
 
     if (token) {
       setAuth(true);
+      setTokenPresent(true);
     } else {
       setAuth(false);
     }
@@ -195,6 +201,7 @@ export const AuthProvider = ({ children }) => {
         supabase,
         OAuthlogOut,
         getUser,
+        tokenPresent,
       }}
     >
       {children}
