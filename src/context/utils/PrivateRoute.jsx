@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 const PrivateRoute = () => {
-  const { auth, getUser, tokenPresent } = useUser();
+  const { auth, getUser } = useUser();
 
   const nofify = () => toast("User Logged In Successfully");
 
@@ -24,16 +24,11 @@ const PrivateRoute = () => {
     handleUser();
   }, [handleUser]);
 
-  // Render nothing until the token is checked
-  if (!tokenPresent) {
-    return <h3>Loading..</h3>;
-  }
-
   return (
     <>
       {" "}
       <ToastContainer theme={"dark"} />
-      {auth && tokenPresent ? <Outlet /> : <Navigate to="/login" />}
+      {auth ? <Outlet /> : <Navigate to="/login" />}
     </>
   );
 };

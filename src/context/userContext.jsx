@@ -13,12 +13,11 @@ const userContext = createContext({
   signUpHandler: () => {},
   handleRecovery: () => {},
   handleUpdate: () => {},
-  googleLogin: () => {},
-  discordLogin: () => {},
-  githubLogin: () => {},
   getUser: () => {},
+  setShowToast: () => {},
   auth: false,
   tokenPresent: false,
+  showToast: false,
 });
 
 // UserProvider.js
@@ -30,17 +29,18 @@ const supabase = createClient(
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
-  const [tokenPresent, setTokenPresent] = useState(false);
+
+  const [showToast, setShowToast] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogin = async (data) => {
     try {
       const res = await account.createEmailSession(data.email, data.password);
+
       localStorage.setItem("token", res.$id);
 
       setAuth(true);
-      setTokenPresent(true);
 
       return res;
     } catch (error) {
@@ -51,6 +51,8 @@ export const AuthProvider = ({ children }) => {
   const signUpHandler = async (data) => {
     try {
       const res = await account.create(ID.unique(), data.email, data.password);
+
+      setShowToast(true);
 
       return res;
     } catch (error) {
@@ -92,7 +94,6 @@ export const AuthProvider = ({ children }) => {
       setAuth(false);
       navigate("/");
       localStorage.removeItem("token");
-      setTokenPresent(false);
 
       return res;
     } catch (error) {
@@ -111,10 +112,8 @@ export const AuthProvider = ({ children }) => {
 
     if (token) {
       setAuth(true);
-      setTokenPresent(true);
     } else {
       setAuth(false);
-      setTokenPresent(false);
     }
 
     console.log("use effect runs");
@@ -122,45 +121,45 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const googleLogin = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-      });
+  // const googleLogin = async () => {
+  //   try {
+  //     const { data, error } = await supabase.auth.signInWithOAuth({
+  //       provider: "google",
+  //     });
 
-      console.log(`login with google`, data);
+  //     console.log(`login with google`, data);
 
-      if (error) throw new error("Error in the google login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     if (error) throw new error("Error in the google login");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const discordLogin = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "discord",
-      });
+  // const discordLogin = async () => {
+  //   try {
+  //     const { data, error } = await supabase.auth.signInWithOAuth({
+  //       provider: "discord",
+  //     });
 
-      console.log("Login with discord data :", data);
-      if (error) throw new error("Error in the google login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     console.log("Login with discord data :", data);
+  //     if (error) throw new error("Error in the google login");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const githubLogin = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "github",
-      });
+  // const githubLogin = async () => {
+  //   try {
+  //     const { data, error } = await supabase.auth.signInWithOAuth({
+  //       provider: "github",
+  //     });
 
-      console.log("Login with github data :", data);
-      if (error) throw new error("Error in the google login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     console.log("Login with github data :", data);
+  //     if (error) throw new error("Error in the google login");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <userContext.Provider
@@ -171,13 +170,11 @@ export const AuthProvider = ({ children }) => {
         handleRecovery,
         handleUpdate,
         getToken,
-        googleLogin,
-        discordLogin,
-        githubLogin,
         supabase,
         OAuthlogOut,
         getUser,
-        tokenPresent,
+        showToast,
+        setShowToast,
       }}
     >
       {children}

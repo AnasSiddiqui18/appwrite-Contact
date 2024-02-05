@@ -2,11 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useUser } from "../context/userContext";
 
 function Header() {
-  const { auth, OAuthlogOut, tokenPresent } = useUser();
-
-  if (tokenPresent) {
-    console.log("token is present");
-  }
+  const { auth, OAuthlogOut } = useUser();
 
   return (
     <div
@@ -16,16 +12,10 @@ function Header() {
       <div>Contactify</div>
       <nav>
         <ul className="flex gap-8">
-          {!auth && !tokenPresent ? <NavLink to="/">Home</NavLink> : null}
-          {!auth && !tokenPresent ? (
-            <NavLink to="/login">Log In</NavLink>
-          ) : null}
-          {!auth && !tokenPresent ? (
-            <NavLink to="/signup">Sign Up</NavLink>
-          ) : null}
-          {auth && tokenPresent ? (
-            <button onClick={OAuthlogOut}>Log Out</button>
-          ) : null}
+          {!auth ? <NavLink to="/">Home</NavLink> : null}
+          {!auth ? <NavLink to="/login">Log In</NavLink> : null}
+          {!auth ? <NavLink to="/signup">Sign Up</NavLink> : null}
+          {auth ? <button onClick={OAuthlogOut}>Log Out</button> : null}
         </ul>
       </nav>
     </div>
